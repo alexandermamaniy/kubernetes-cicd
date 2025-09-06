@@ -25,12 +25,12 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: grade-submission-api
+  name: app-api
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR_USERNAME/grade-api-gitops.git
+    repoURL: https://github.com/alexandermamaniy/app-api-gitops.git
     targetRevision: HEAD
     path: .
   destination:
@@ -52,4 +52,13 @@ kubectl create secret docker-registry ghcr-secret \\
   --docker-username=YOUR_USERNAME \\
   --docker-password=YOUR_PAT \\
   --namespace=default
+```
+
+## Applying changes to ArgoCD Application
+
+Verify the ArgoCD services are running and apply the application manifest
+
+```bash
+kubectl get svc -n argocd
+kubectl apply -f argocd-application.yaml
 ```
