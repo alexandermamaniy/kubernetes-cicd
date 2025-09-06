@@ -1,4 +1,10 @@
 
+## Requirements
+- Client Version: v1.33.1
+- Kustomize Version: v5.6.0
+- Server Version: v1.33.1
+- Helm Version: v3.18.6
+
 ## Install ArgoCD
 
 ```bash
@@ -6,12 +12,6 @@ helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 kubectl create namespace argocd
 helm install argocd argo/argo-cd --namespace argocd
-```
-
-## Access ArgoCD UI
-
-```bash
-kubectl port-forward svc/argocd-server -n argocd 8080:80
 ```
 
 ## Retrieve Credentials
@@ -61,4 +61,11 @@ Verify the ArgoCD services are running and apply the application manifest
 ```bash
 kubectl get svc -n argocd
 kubectl apply -f argocd-application.yaml
+```
+
+
+## Access ArgoCD UI
+
+```bash
+kubectl port-forward svc/argocd-server -n argocd 8080:80
 ```
