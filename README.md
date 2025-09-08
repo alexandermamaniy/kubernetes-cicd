@@ -1,71 +1,57 @@
+# CI/CD for Kubernetes
+
+This project demonstrates a robust CI/CD pipeline for Kubernetes, leveraging GitHub Actions, GitHub Runners, and GitHub Container Registry. It integrates with ArgoCD, following GitOps principles to ensure a single source of truth for deployments.
+
+## Features
+
+- Automated build and push of Docker images to GitHub Container Registry.
+- GitOps workflow: deployment manifests are updated automatically on new builds.
+- Integration with ArgoCD for continuous delivery to Kubernetes clusters.
+- Support for multiple Kubernetes implementations.
 
 ## Requirements
-- Client Version: v1.33.1
-- Kustomize Version: v5.6.0
-- Server Version: v1.33.1
-- Helm Version: v3.18.6
 
-## Install ArgoCD
+- **minikube**: v1.36.0
+- **kubectl**:  
+  - Client Version: v1.33.1  
+  - Server Version: v1.33.1
+- **Kustomize**: v5.6.0
+- **Helm**: v3.18.6
+- **GitHub Runner**: v2.328.0
 
-```bash
-helm repo add argo https://argoproj.github.io/argo-helm
-helm repo update
-kubectl create namespace argocd
-helm install argocd argo/argo-cd --namespace argocd
-```
+## Personal Access Tokens
 
-## Retrieve Credentials
+You need to generate the following GitHub Personal Access Tokens (PATs):
 
-```bash
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-```
-## ArgoCD Application
-
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: app-api
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/alexandermamaniy/app-api-gitops.git
-    targetRevision: HEAD
-    path: .
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-```
-
-## Creating Image Pull Secrets
-
-To allow Kubernetes to pull images from GitHub Container Registry:
-
-```yaml
-kubectl create secret docker-registry ghcr-secret \\
-  --docker-server=ghcr.io \\
-  --docker-username=YOUR_USERNAME \\
-  --docker-password=YOUR_PAT \\
-  --namespace=default
-```
-
-## Applying changes to ArgoCD Application
-
-Verify the ArgoCD services are running and apply the application manifest
-
-```bash
-kubectl get svc -n argocd
-kubectl apply -f argocd-application.yaml
-```
+- `CR_PAT`:  
+  _Scope: Push images to GitHub Container Registry_
+- `GITOPS_PAT`:  
+  _Scope: Push commits to specific repositories_
 
 
-## Access ArgoCD UI
+## GitOps Repositories
 
-```bash
-kubectl port-forward svc/argocd-server -n argocd 8080:80
-```
+Container image tags and deployment manifests are managed in the following repositories, serving as the unique source of truth:
+
+- [`argocd`](https://github.com/alexandermamaniy/app-api-gitops)
+- [`argocd-helm`](https://github.com/alexandermamaniy/argocd-helm)
+- [`argocd-kustomize`](https://github.com/alexandermamaniy/argocd-kustomize)
+
+## How It Works
+
+1. **Code Push or Pull Request:**  
+   Triggers the GitHub Actions workflow.
+2. **Build & Push:**  
+   Docker image is built and pushed to GitHub Container Registry.
+3. **Update:**  
+   The deployment manifest in each repository is updated with the new image tag.
+4. **ArgoCD Sync:**  
+   ArgoCD detects the change and deploys the new version to each Kubernetes cluster.
+
+## Getting Started
+
+1. Fork and clone this repository.
+2. Set up the required GitHub PATs as repository secrets: `CR_PAT` and `GITOPS_PAT`.
+3. Configure your self-hosted GitHub Runner.
+4. Ensure your Kubernetes cluster is running and accessible.
+

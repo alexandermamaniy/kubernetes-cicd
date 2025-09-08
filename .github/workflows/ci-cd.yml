@@ -36,23 +36,23 @@ jobs:
           echo "https://${GIT_TOKEN}:x-oauth-basic@github.com" > ~/.git-credentials
           
           # Remove any existing gitops directory
-          rm -rf gitops
+          rm -rf argocd
           
           # Clone repository using HTTPS URL without token
-          git clone https://github.com/alexandermamaniy/app-api-gitops.git gitops
-          cd gitops
+          git clone https://github.com/alexandermamaniy/argocd.git argocd
+          cd argocd/basic
           
           if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i '' "s|image: ghcr.io/${{ github.repository }}:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|g" deployment.yaml
+            sed -i '' "s|image: ghcr.io/${{ github.repository }}:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|g" api-deployment.yaml
           else
-            sed -i "s|image: ghcr.io/${{ github.repository }}:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|g" deployment.yaml
+            sed -i "s|image: ghcr.io/${{ github.repository }}:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|g" api-deployment.yaml
           fi
           
           # Commit changes
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add deployment.yaml
+          git add api-deployment.yaml
           git commit -m "Update image to ${{ github.sha }}"
           
           # Push
-          git push -f https://${GIT_TOKEN}@github.com/alexandermamaniy/app-api-gitops.git main
+          git push -f https://${GIT_TOKEN}@github.com/alexandermamaniy/argocd.git main
