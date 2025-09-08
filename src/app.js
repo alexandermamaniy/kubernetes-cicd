@@ -16,7 +16,7 @@ app.get('/test', (req, res) => {
 
 const port = 3000;
 app.listen(port, () => {
-  console.log(`API service is running on port ${port} !!`);
+  console.log(`API REST service is running on port ${port} !!`);
 });
 
 

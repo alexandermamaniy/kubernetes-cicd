@@ -55,3 +55,5 @@ Container image tags and deployment manifests are managed in the following repos
 3. Configure your self-hosted GitHub Runner.
 4. Ensure your Kubernetes cluster is running and accessible.
 
+## ArgoCD Overview
+![img.png](img/img.png)
