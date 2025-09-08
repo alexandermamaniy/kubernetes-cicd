@@ -39,9 +39,10 @@ jobs:
           rm -rf argocd
           
           # Clone repository using HTTPS URL without token
+
           git clone https://github.com/alexandermamaniy/argocd.git argocd
           cd argocd/basic
-          
+
           if [[ "$OSTYPE" == "darwin"* ]]; then
             sed -i '' "s|image: ghcr.io/${{ github.repository }}:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|g" api-deployment.yaml
           else
